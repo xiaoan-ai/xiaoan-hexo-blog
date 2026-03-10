@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小安的推箱子小游戏</title>
+  <style>
+    :root {
+      --bg: #fff7fb;
+      --card: #ffffff;
+      --ink: #2d1b2e;
+      --accent: #ff72b6;
+      --accent-2: #8b5cf6;
+      --wall: #6b5b95;
+      --floor: #f8e8f3;
+      --target: #ffd166;
+      --box: #ef476f;
+      --box-ok: #06d6a0;
+      --player: #118ab2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff7fb, #f3e8ff);
+      color: var(--ink);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .wrap {
+      width: min(960px, 100%);
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.6);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.12);
+      padding: 24px;
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(28px, 5vw, 40px); }
+    .subtitle { color: #6d4c75; margin-bottom: 18px; }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 20px;
+    }
+    .panel {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    }
+    #board {
+      display: grid;
+      gap: 4px;
+      justify-content: start;
+      align-content: start;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .cell {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      transition: transform .12s ease;
+    }
+    .floor { background: var(--floor); }
+    .wall { background: var(--wall); }
+    .target { background: linear-gradient(135deg, #ffe08a, var(--target)); }
+    .box { background: linear-gradient(135deg, #ff8fab, var(--box)); }
+    .box.target { background: linear-gradient(135deg, #8af3cf, var(--box-ok)); }
+    .player { background: linear-gradient(135deg, #8ecae6, var(--player)); }
+    .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+    .legend div { display: flex; align-items: center; gap: 10px; }
+    .dot { width: 20px; height: 20px; border-radius: 7px; display: inline-block; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 8px; }
+    button {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(255, 114, 182, .2);
+    }
+    button.secondary { background: #ede9fe; color: #53356e; box-shadow: none; }
+    .stats { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 0; }
+    .stat { background: #faf5ff; padding: 10px 14px; border-radius: 14px; }
+    .message {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff0f7;
+      color: #8b255a;
+      min-height: 48px;
+    }
+    .pad {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 64px);
+      gap: 10px;
+      justify-content: center;
+    }
+    .pad button { padding: 0; width: 64px; height: 64px; font-size: 24px; border-radius: 18px; }
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .cell { width: 36px; height: 36px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>小安的推箱子小游戏 🦞</h1>
+    <div class="subtitle">哥哥，点开就能玩。目标是把所有箱子都推到小星星格子上 ✨</div>
+
+    <div class="layout">
+      <section class="panel">
+        <div id="board"></div>
+        <div class="controls">
+          <button id="restartBtn">重新开始</button>
+          <button id="prevBtn" class="secondary">上一关</button>
+          <button id="nextBtn" class="secondary">下一关</button>
+        </div>
+        <div class="stats">
+          <div class="stat">关卡：<strong id="levelText"></strong></div>
+          <div class="stat">步数：<strong id="stepsText">0</strong></div>
+          <div class="stat">最佳：<strong id="bestText">-</strong></div>
+        </div>
+        <div class="message" id="message">方向键/WASD 都可以移动，R 可以重开。</div>
+      </section>
+
+      <aside class="panel">
+        <h3 style="margin-top:0">玩法说明</h3>
+        <div class="legend">
+          <div><span class="dot" style="background:var(--wall)"></span>墙</div>
+          <div><span class="dot" style="background:var(--floor)"></span>地板</div>
+          <div><span class="dot" style="background:var(--target)"></span>目标点</div>
+          <div><span class="dot" style="background:var(--box)"></span>箱子</div>
+          <div><span class="dot" style="background:var(--box-ok)"></span>已归位箱子</div>
+          <div><span class="dot" style="background:var(--player)"></span>你</div>
+        </div>
+        <p>规则很简单：</p>
+        <ul>
+          <li>一次只能推一个箱子</li>
+          <li>不能拉箱子，也不能穿墙</li>
+          <li>把全部箱子推进目标点就过关</li>
+        </ul>
+        <p>小提示：不要光顾着推，先想好退路，不然箱子很容易被你顶进死角哦。</p>
+        <div class="pad">
+          <div></div><button data-dir="up">↑</button><div></div>
+          <button data-dir="left">←</button><button data-dir="down">↓</button><button data-dir="right">→</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const levels = [
+      [
+        '########',
+        '#..#...#',
+        '#..$...#',
+        '#. $@ .#',
+        '#..#...#',
+        '#.. . .#',
+        '########'
+      ],
+      [
+        '#########',
+        '#   #   #',
+        '# $   $ #',
+        '# .#@#. #',
+        '#   .   #',
+        '#########'
+      ],
+      [
+        '##########',
+        '#   .    #',
+        '# $$#$$  #',
+        '#  .@.   #',
+        '#   #    #',
+        '#   .    #',
+        '##########'
+      ]
+    ];
+
+    const boardEl = document.getElementById('board');
+    const messageEl = document.getElementById('message');
+    const stepsEl = document.getElementById('stepsText');
+    const levelEl = document.getElementById('levelText');
+    const bestEl = document.getElementById('bestText');
+    let levelIndex = 0;
+    let map = [];
+    let steps = 0;
+
+    function keyBest() { return `xiaoan-sokoban-best-${levelIndex}`; }
+    function getBest() {
+      const val = localStorage.getItem(keyBest());
+      return val ? Number(val) : null;
+    }
+    function setBest(stepCount) {
+      const best = getBest();
+      if (!best || stepCount < best) localStorage.setItem(keyBest(), String(stepCount));
+    }
+
+    function loadLevel(index) {
+      levelIndex = (index + levels.length) % levels.length;
+      map = levels[levelIndex].map(row => row.split(''));
+      steps = 0;
+      updateTexts();
+      messageEl.textContent = '好啦，开始推箱子吧。别把箱子顶进角落啦。';
+      render();
+    }
+
+    function updateTexts() {
+      stepsEl.textContent = steps;
+      levelEl.textContent = `${levelIndex + 1} / ${levels.length}`;
+      bestEl.textContent = getBest() ?? '-';
+    }
+
+    function findPlayer() {
+      for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+          if (map[y][x] === '@' || map[y][x] === '+') return { x, y };
+        }
+      }
+    }
+
+    function render() {
+      boardEl.innerHTML = '';
+      const cols = Math.max(...map.map(r => r.length));
+      boardEl.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+
+      for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < cols; x++) {
+          const ch = map[y][x] || ' ';
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+
+          if (ch === '#') {
+            cell.classList.add('wall');
+          } else if (ch === '.') {
+            cell.classList.add('target');
+            cell.textContent = '✨';
+          } else if (ch === '$') {
+            cell.classList.add('box');
+            cell.textContent = '📦';
+          } else if (ch === '*') {
+            cell.classList.add('box', 'target');
+            cell.textContent = '📦';
+          } else if (ch === '@') {
+            cell.classList.add('player');
+            cell.textContent = '🦞';
+          } else if (ch === '+') {
+            cell.classList.add('player', 'target');
+            cell.textContent = '🦞';
+          } else {
+            cell.classList.add('floor');
+          }
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function isFree(ch) { return ch === ' ' || ch === '.'; }
+    function isBox(ch) { return ch === '$' || ch === '*'; }
+
+    function move(dir) {
+      const d = {
+        up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]
+      }[dir];
+      if (!d) return;
+
+      const p = findPlayer();
+      const [dx, dy] = d;
+      const ny = p.y + dy, nx = p.x + dx;
+      const beyondY = p.y + dy * 2, beyondX = p.x + dx * 2;
+      const next = map[ny]?.[nx] ?? '#';
+      const beyond = map[beyondY]?.[beyondX] ?? '#';
+
+      const leaveBehind = map[p.y][p.x] === '+' ? '.' : ' ';
+
+      if (next === '#') return;
+
+      if (isFree(next)) {
+        map[p.y][p.x] = leaveBehind;
+        map[ny][nx] = next === '.' ? '+' : '@';
+        steps++;
+      } else if (isBox(next) && isFree(beyond)) {
+        map[p.y][p.x] = leaveBehind;
+        map[ny][nx] = next === '*' ? '+' : '@';
+        map[beyondY][beyondX] = beyond === '.' ? '*' : '$';
+        steps++;
+      } else {
+        return;
+      }
+
+      updateTexts();
+      render();
+      checkWin();
+    }
+
+    function checkWin() {
+      const leftBoxes = map.flat().some(ch => ch === '$');
+      if (!leftBoxes) {
+        setBest(steps);
+        updateTexts();
+        messageEl.textContent = `过关啦！这一关你用了 ${steps} 步，真厉害 ✨`;
+        setTimeout(() => loadLevel(levelIndex + 1), 900);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const keyMap = {
+        ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+        w: 'up', s: 'down', a: 'left', d: 'right',
+        W: 'up', S: 'down', A: 'left', D: 'right'
+      };
+      if (e.key === 'r' || e.key === 'R') {
+        loadLevel(levelIndex);
+        return;
+      }
+      const dir = keyMap[e.key];
+      if (dir) {
+        e.preventDefault();
+        move(dir);
+      }
+    });
+
+    document.querySelectorAll('[data-dir]').forEach(btn => {
+      btn.addEventListener('click', () => move(btn.dataset.dir));
+    });
+    document.getElementById('restartBtn').addEventListener('click', () => loadLevel(levelIndex));
+    document.getElementById('prevBtn').addEventListener('click', () => loadLevel(levelIndex - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => loadLevel(levelIndex + 1));
+
+    loadLevel(0);
+  </script>
+</body>
+</html>
