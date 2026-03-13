@@ -3,161 +3,263 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>小安的推箱子小游戏</title>
+  <title>Sokoban · 小安 Game Room</title>
+  <meta name="description" content="小安的独立 Sokoban 推箱子游戏页：纯游戏落地页，支持键盘与触屏操作。" />
   <style>
     :root {
-      --bg: #fff7fb;
-      --card: #ffffff;
-      --ink: #2d1b2e;
-      --accent: #ff72b6;
-      --accent-2: #8b5cf6;
-      --wall: #6b5b95;
-      --floor: #f8e8f3;
-      --target: #ffd166;
-      --box: #ef476f;
-      --box-ok: #06d6a0;
-      --player: #118ab2;
+      color-scheme: dark;
+      --bg: #090511;
+      --bg-2: #1b1030;
+      --panel: rgba(22, 12, 42, 0.76);
+      --panel-2: rgba(25, 14, 48, 0.92);
+      --line: rgba(255,255,255,.12);
+      --text: #faf5ff;
+      --muted: #d8b4fe;
+      --pink: #f472b6;
+      --purple: #8b5cf6;
+      --gold: #fbbf24;
+      --cyan: #67e8f9;
+      --green: #34d399;
+      --shadow: 0 28px 70px rgba(10, 5, 20, .52);
     }
     * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
     body {
-      margin: 0;
       font-family: "Microsoft YaHei", system-ui, sans-serif;
-      background: linear-gradient(135deg, #fff7fb, #f3e8ff);
-      color: var(--ink);
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(244,114,182,.18), transparent 24%),
+        radial-gradient(circle at 86% 10%, rgba(139,92,246,.24), transparent 28%),
+        radial-gradient(circle at 60% 88%, rgba(103,232,249,.14), transparent 24%),
+        linear-gradient(145deg, #090511, #14091f 45%, #26123a);
     }
-    .wrap {
-      width: min(960px, 100%);
-      background: rgba(255,255,255,.86);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,.6);
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.12);
-      padding: 24px;
+    .page {
+      width: min(calc(100% - 32px), 1320px);
+      margin: 0 auto;
+      padding: 28px 0 42px;
     }
-    h1 { margin: 0 0 8px; font-size: clamp(28px, 5vw, 40px); }
-    .subtitle { color: #6d4c75; margin-bottom: 18px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(22,12,42,.64);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
     .layout {
       display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 20px;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 22px;
     }
     .panel {
-      background: var(--card);
-      border-radius: 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+    .hero {
+      padding: 30px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(244,114,182,.16), transparent 34%),
+        radial-gradient(circle at 84% 16%, rgba(103,232,249,.16), transparent 24%),
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: auto, auto, 26px 26px, 26px 26px;
+      pointer-events: none;
+    }
+    .eyebrow {
+      position: relative;
+      display: inline-flex;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      color: #fbcfe8;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: .08em;
+    }
+    h1 { position: relative; margin: 16px 0 10px; font-size: clamp(38px, 6vw, 66px); line-height: 1; }
+    .hero p { position: relative; margin: 0; color: #f5dfff; line-height: 1.8; max-width: 780px; }
+    .content { padding: 24px; display: grid; gap: 18px; }
+    .stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 18px;
+      align-items: start;
+    }
+    .board-shell {
       padding: 18px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.06);
     }
     #board {
       display: grid;
-      gap: 4px;
+      gap: 6px;
       justify-content: start;
       align-content: start;
       user-select: none;
       touch-action: manipulation;
     }
     .cell {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
       display: grid;
       place-items: center;
       font-size: 22px;
       transition: transform .12s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
     }
-    .floor { background: var(--floor); }
-    .wall { background: var(--wall); }
-    .target { background: linear-gradient(135deg, #ffe08a, var(--target)); }
-    .box { background: linear-gradient(135deg, #ff8fab, var(--box)); }
-    .box.target { background: linear-gradient(135deg, #8af3cf, var(--box-ok)); }
-    .player { background: linear-gradient(135deg, #8ecae6, var(--player)); }
-    .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
-    .legend div { display: flex; align-items: center; gap: 10px; }
-    .dot { width: 20px; height: 20px; border-radius: 7px; display: inline-block; }
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 8px; }
-    button {
+    .floor { background: rgba(255,255,255,.06); }
+    .wall { background: linear-gradient(135deg, #4c1d95, #6d28d9); }
+    .target { background: linear-gradient(135deg, #fde68a, var(--gold)); color: #4c1d95; }
+    .box { background: linear-gradient(135deg, #fb7185, var(--pink)); }
+    .box.target { background: linear-gradient(135deg, #6ee7b7, var(--green)); }
+    .player { background: linear-gradient(135deg, #a5f3fc, var(--cyan)); color: #0f172a; }
+    .side-rail { display: grid; gap: 12px; }
+    .rail-card, .message, .stat, .legend-item {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .controls, .stats { display: flex; flex-wrap: wrap; gap: 10px; }
+    .stats .stat { min-width: 110px; }
+    .btn {
       border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(255, 114, 182, .2);
-    }
-    button.secondary { background: #ede9fe; color: #53356e; box-shadow: none; }
-    .stats { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 0; }
-    .stat { background: #faf5ff; padding: 10px 14px; border-radius: 14px; }
-    .message {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: #fff0f7;
-      color: #8b255a;
       min-height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font: inherit;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 14px 28px rgba(244,114,182,.2);
     }
+    .btn.secondary {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: none;
+    }
+    .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; color: #f5dfff; }
+    .dot { width: 20px; height: 20px; border-radius: 7px; display: inline-block; }
     .pad {
-      margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(3, 64px);
       gap: 10px;
       justify-content: center;
+      margin-top: 8px;
     }
-    .pad button { padding: 0; width: 64px; height: 64px; font-size: 24px; border-radius: 18px; }
-    @media (max-width: 820px) {
-      .layout { grid-template-columns: 1fr; }
-      .cell { width: 36px; height: 36px; font-size: 18px; }
+    .pad .btn { padding: 0; min-height: 64px; font-size: 22px; border-radius: 18px; }
+    .message { color: #ffe4f4; line-height: 1.7; min-height: 56px; }
+    .tips p, li { color: #f5dfff; line-height: 1.8; }
+    @media (max-width: 1100px) {
+      .layout, .stage { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .page { width: min(calc(100% - 20px), 1320px); padding-top: 18px; }
+      .hero, .content { padding: 18px; }
+      .cell { width: 38px; height: 38px; font-size: 18px; }
+      .pad { grid-template-columns: repeat(3, 56px); }
+      .pad .btn { min-height: 56px; }
+      .legend { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>小安的推箱子小游戏 🦞</h1>
-    <div class="subtitle">哥哥，点开就能玩。目标是把所有箱子都推到小星星格子上 ✨</div>
+  <main class="page">
+    <div class="topbar">
+      <a class="chip" href="/xiaoan-hexo-blog/games/">← 返回 Games Portal</a>
+      <a class="chip" href="/xiaoan-hexo-blog/">博客首页</a>
+    </div>
 
-    <div class="layout">
+    <section class="layout">
       <section class="panel">
-        <div id="board"></div>
-        <div class="controls">
-          <button id="restartBtn">重新开始</button>
-          <button id="prevBtn" class="secondary">上一关</button>
-          <button id="nextBtn" class="secondary">下一关</button>
+        <div class="hero">
+          <span class="eyebrow">Sokoban / Puzzle / Pure Landing Page</span>
+          <h1>推箱子</h1>
+          <p>把 Sokoban 一起纳入独立作品体系。页面不再像文章内容块，而是直接展示游戏舞台、关卡控制、成绩信息和玩法说明。</p>
         </div>
-        <div class="stats">
-          <div class="stat">关卡：<strong id="levelText"></strong></div>
-          <div class="stat">步数：<strong id="stepsText">0</strong></div>
-          <div class="stat">最佳：<strong id="bestText">-</strong></div>
+
+        <div class="content">
+          <div class="controls">
+            <button class="btn" id="restartBtn">重新开始</button>
+            <button class="btn secondary" id="prevBtn">上一关</button>
+            <button class="btn secondary" id="nextBtn">下一关</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat">关卡：<strong id="levelText"></strong></div>
+            <div class="stat">步数：<strong id="stepsText">0</strong></div>
+            <div class="stat">最佳：<strong id="bestText">-</strong></div>
+          </div>
+
+          <div class="stage">
+            <div class="board-shell"><div id="board"></div></div>
+            <aside class="side-rail">
+              <div class="rail-card">
+                <strong>方向键</strong>
+                <div class="pad">
+                  <div></div><button class="btn secondary" data-dir="up">↑</button><div></div>
+                  <button class="btn secondary" data-dir="left">←</button><button class="btn secondary" data-dir="down">↓</button><button class="btn secondary" data-dir="right">→</button>
+                </div>
+              </div>
+              <div class="message" id="message">方向键 / WASD 都可以移动，R 可以重开。</div>
+            </aside>
+          </div>
         </div>
-        <div class="message" id="message">方向键/WASD 都可以移动，R 可以重开。</div>
       </section>
 
-      <aside class="panel">
-        <h3 style="margin-top:0">玩法说明</h3>
-        <div class="legend">
-          <div><span class="dot" style="background:var(--wall)"></span>墙</div>
-          <div><span class="dot" style="background:var(--floor)"></span>地板</div>
-          <div><span class="dot" style="background:var(--target)"></span>目标点</div>
-          <div><span class="dot" style="background:var(--box)"></span>箱子</div>
-          <div><span class="dot" style="background:var(--box-ok)"></span>已归位箱子</div>
-          <div><span class="dot" style="background:var(--player)"></span>你</div>
-        </div>
-        <p>规则很简单：</p>
-        <ul>
-          <li>一次只能推一个箱子</li>
-          <li>不能拉箱子，也不能穿墙</li>
-          <li>把全部箱子推进目标点就过关</li>
-        </ul>
-        <p>小提示：不要光顾着推，先想好退路，不然箱子很容易被你顶进死角哦。</p>
-        <div class="pad">
-          <div></div><button data-dir="up">↑</button><div></div>
-          <button data-dir="left">←</button><button data-dir="down">↓</button><button data-dir="right">→</button>
-        </div>
+      <aside class="panel" style="padding:24px; display:grid; gap:18px; align-content:start;">
+        <section>
+          <h3 style="margin:0 0 12px;">图例</h3>
+          <div class="legend">
+            <div class="legend-item"><span class="dot" style="background:linear-gradient(135deg,#4c1d95,#6d28d9)"></span>墙</div>
+            <div class="legend-item"><span class="dot" style="background:rgba(255,255,255,.15)"></span>地板</div>
+            <div class="legend-item"><span class="dot" style="background:linear-gradient(135deg,#fde68a,#fbbf24)"></span>目标点</div>
+            <div class="legend-item"><span class="dot" style="background:linear-gradient(135deg,#fb7185,#f472b6)"></span>箱子</div>
+            <div class="legend-item"><span class="dot" style="background:linear-gradient(135deg,#6ee7b7,#34d399)"></span>已归位箱子</div>
+            <div class="legend-item"><span class="dot" style="background:linear-gradient(135deg,#a5f3fc,#67e8f9)"></span>你</div>
+          </div>
+        </section>
+        <section class="tips">
+          <h3 style="margin:0 0 10px;">玩法说明</h3>
+          <ul>
+            <li>一次只能推动一个箱子。</li>
+            <li>不能拉箱子，也不能穿墙。</li>
+            <li>把全部箱子推到目标点就算过关。</li>
+          </ul>
+          <p>小提示：先想退路，再推箱子。死角永远比你想得更近。</p>
+        </section>
       </aside>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
     const levels = [
@@ -246,7 +348,7 @@
             cell.classList.add('wall');
           } else if (ch === '.') {
             cell.classList.add('target');
-            cell.textContent = '✨';
+            cell.textContent = '✦';
           } else if (ch === '$') {
             cell.classList.add('box');
             cell.textContent = '📦';
@@ -255,10 +357,10 @@
             cell.textContent = '📦';
           } else if (ch === '@') {
             cell.classList.add('player');
-            cell.textContent = '🦞';
+            cell.textContent = '◉';
           } else if (ch === '+') {
             cell.classList.add('player', 'target');
-            cell.textContent = '🦞';
+            cell.textContent = '◉';
           } else {
             cell.classList.add('floor');
           }
@@ -271,9 +373,7 @@
     function isBox(ch) { return ch === '$' || ch === '*'; }
 
     function move(dir) {
-      const d = {
-        up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]
-      }[dir];
+      const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[dir];
       if (!d) return;
 
       const p = findPlayer();
@@ -282,11 +382,9 @@
       const beyondY = p.y + dy * 2, beyondX = p.x + dx * 2;
       const next = map[ny]?.[nx] ?? '#';
       const beyond = map[beyondY]?.[beyondX] ?? '#';
-
       const leaveBehind = map[p.y][p.x] === '+' ? '.' : ' ';
 
       if (next === '#') return;
-
       if (isFree(next)) {
         map[p.y][p.x] = leaveBehind;
         map[ny][nx] = next === '.' ? '+' : '@';
