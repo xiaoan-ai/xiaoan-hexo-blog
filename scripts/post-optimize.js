@@ -31,11 +31,10 @@ function optimizePost(filePath) {
         }
     }
     
-    // 2. 修复标题：移除乱码、冗余字符
-    data.title = (data.title || path.basename(filePath, '.md'))
-        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s\-]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+    // 2. 标题：不在这里做“去标点/清洗”处理。
+    // 之前的实现会把“｜”“：”“引号”等标点全部删掉，导致标题风格被破坏。
+    // 如果需要修复乱码，应在专用脚本中做一次性处理，而不是在 Hexo 每次运行时自动改标题。
+    data.title = (data.title || path.basename(filePath, '.md')).trim();
     
     // 3. 标准化markdown格式
     let optimizedBody = body
@@ -159,9 +158,17 @@ function validatePosts() {
 }
 
 // 运行
+// 注意：Hexo 会自动加载 scripts/ 目录下的 .js 文件。
+// 为避免“每次 hexo clean/generate/deploy 都自动改文章标题/文件名”，这里默认不自动执行。
+// 如需手动优化：
+//   POST_OPTIMIZE_RUN=1 node scripts/post-optimize.js
+// 或仅校验：
+//   node scripts/post-optimize.js --validate
 if (process.argv.includes('--validate')) {
     process.exit(validatePosts() ? 0 : 1);
-} else {
+}
+
+if (process.env.POST_OPTIMIZE_RUN === '1') {
     optimizeAllPosts();
-    validatePosts();
+    process.exit(validatePosts() ? 0 : 1);
 }
