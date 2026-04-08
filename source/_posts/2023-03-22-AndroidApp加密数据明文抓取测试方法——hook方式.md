@@ -1,5 +1,5 @@
 ---
-title: AndroidApp加密数据明文抓取测试方法——hook方式 - 海屿-uf9n1x - 博客园
+title: AndroidApp加密数据明文抓取测试方法——hook方式
 date: 2023-03-22T12:00:00+08:00
 categories:
   - 移动安全

@@ -1,5 +1,5 @@
 ---
-title: javasec(五)URLDNS反序列化分析 - 海屿-uf9n1x - 博客园
+title: javasec(五)URLDNS反序列化分析
 date: 2023-04-19T12:00:00+08:00
 categories:
   - Java安全

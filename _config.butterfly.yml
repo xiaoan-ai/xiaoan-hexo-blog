@@ -31,7 +31,7 @@ menu:
 
 code_blocks:
   # Code block theme: darker / pale night / light / ocean / false
-  theme: light
+  theme: darker
   macStyle: true
   # Code block height limit (unit: px)
   height_limit: false
@@ -58,7 +58,7 @@ social:
 favicon: /img/favicon.png
 
 avatar:
-  img: https://img2023.cnblogs.com/blog/2501811/202304/2501811-20230412224527970-748805058.png
+  img: /img/avator.png
   effect: false
 
 # Disable all banner images
@@ -68,7 +68,7 @@ disable_top_img: false
 default_top_img:
 
 # The banner image of index page
-index_img: /blog-bg.png
+index_img: /img/blog-bg.png
 
 # The banner image of archive page
 archive_img:

@@ -1,5 +1,5 @@
 ---
-title: FCKeditor编辑器漏洞 - 海屿-uf9n1x - 博客园
+title: FCKeditor编辑器漏洞
 date: 2023-03-09T12:00:00+08:00
 categories:
   - Web安全
