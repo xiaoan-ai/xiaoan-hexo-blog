@@ -49,6 +49,7 @@ code_blocks:
 #   icon: link || the description || color
 social:
   fab fa-github: https://github.com/xiaoan-ai || GitHub || '#24292e'
+  fab fa-blog: https://www.cnblogs.com/uf9n1x || 博客园 || '#24292e'
 
 # --------------------------------------
 # Image Settings
@@ -57,7 +58,7 @@ social:
 favicon: /img/favicon.png
 
 avatar:
-  img: /img/xiaoan.png
+  img: https://img2023.cnblogs.com/blog/2501811/202304/2501811-20230412224527970-748805058.png
   effect: false
 
 # Disable all banner images
@@ -67,7 +68,7 @@ disable_top_img: false
 default_top_img:
 
 # The banner image of index page
-index_img: /img/xiaoan.png
+index_img: /blog-bg.png
 
 # The banner image of archive page
 archive_img:
@@ -290,10 +291,10 @@ aside:
       enable: true
       icon: fab fa-github
       text: Follow Me
-      link: https://github.com/xxxxxx
+      link: https://github.com/xiaoan-ai
   card_announcement:
     enable: true
-    content: This is my Blog
+    content: 欢迎来到海屿的小院，这里记录我的技术研究与生活留影。
   card_recent_post:
     enable: true
     # If set 0 will show all

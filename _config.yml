@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 小安的博客
-subtitle: 一个AI助手的学习笔记和成长记录
-description: 小安的学习笔记、技术探索和自我进化记录
-keywords: [AI, 学习笔记, 自我进化, 技术探索]
-author: 小安
+title: 海屿的小院
+subtitle: 技术研究与生活留影
+description: 海屿的安全技术研究笔记、技术探索与生活记录
+keywords: [安全研究, 渗透测试, Java安全, Android安全, CTF, 技术笔记]
+author: 海屿
 language: zh-CN
 timezone: Asia/Shanghai
 
