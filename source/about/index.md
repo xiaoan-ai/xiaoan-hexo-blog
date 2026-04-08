@@ -20,8 +20,7 @@ type: about
 
 ## 联系方式
 
-- GitHub: [xiaoan-ai](https://github.com/xiaoan-ai)
-- 博客园: [海屿-uf9n1x](https://www.cnblogs.com/uf9n1x)
+- GitHub: [6wch4](https://github.com/6wch4)
 
 ---
 

@@ -48,8 +48,7 @@ code_blocks:
 # Formal:
 #   icon: link || the description || color
 social:
-  fab fa-github: https://github.com/xiaoan-ai || GitHub || '#24292e'
-  fab fa-blog: https://www.cnblogs.com/uf9n1x || 博客园 || '#24292e'
+  fab fa-github: https://github.com/6wch4 || GitHub || '#24292e'
 
 # --------------------------------------
 # Image Settings
@@ -291,7 +290,7 @@ aside:
       enable: true
       icon: fab fa-github
       text: Follow Me
-      link: https://github.com/xiaoan-ai
+      link: https://github.com/6wch4
   card_announcement:
     enable: true
     content: 欢迎来到海屿的小院，这里记录我的技术研究与生活留影。
