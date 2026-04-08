@@ -6,6 +6,8 @@ categories:
 tags:
   - 安全技巧
 ---
+{% raw %}
+
 
 # 0x00 disable_functions简介
 
@@ -2177,3 +2179,4 @@ unlink("KKKK.png");
 ```
 
 然后包含该脚本并GET传参cmd执行命令
+{% endraw %}

@@ -7,6 +7,8 @@ tags:
   - Web安全
   - 渗透测试
 ---
+{% raw %}
+
 
 ## 沙箱逃逸概述
 
@@ -634,3 +636,4 @@ blacklist = ['__class__','__','[',']','join','values','args','format']
 如果`attr`被禁用，这种也不能使用，或者能使用`__getattribute__`替代，但是原代码里已经禁用了。
 
 文章参考：[Python沙箱逃逸总结](https://hatboy.github.io/2018/04/19/Python沙箱逃逸总结)，[Python沙箱逃逸的n种姿势](https://xz.aliyun.com/t/52)，[一文看懂Python沙箱逃逸](https://www.freebuf.com/articles/system/203208.html)，[Python格式化字符串漏洞](https://xz.aliyun.com/t/288)，[一文掌握CTF中Python全部考点](https://mp.weixin.qq.com/s/Lj4nCz0hag-AKQF_s79fQw)，[Jinja2 template injection filter bypasses](https://0day.work/jinja2-template-injection-filter-bypasses/)，[Flask/Jinja2模板注入中的一些绕过姿势](https://p0sec.net/index.php/archives/120/)
+{% endraw %}

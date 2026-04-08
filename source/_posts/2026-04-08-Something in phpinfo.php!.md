@@ -6,6 +6,8 @@ categories:
 tags:
   - CTF
 ---
+{% raw %}
+
 
 ## WEEK1
 
@@ -2636,3 +2638,4 @@ http://node4.buuoj.cn:29715/s/5da3818f2b481c261749c7e1e4042d4e545c1676752d6f209f
 
 打开得到flag
 ![image-20241026223919792](/images/notes/CTF-NewStarCtf-web/images/101.png)
+{% endraw %}

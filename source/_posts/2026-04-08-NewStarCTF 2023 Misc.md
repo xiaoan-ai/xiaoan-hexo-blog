@@ -6,6 +6,8 @@ categories:
 tags:
   - CTF
 ---
+{% raw %}
+
 
 # NewStarCTF 2023 Misc
 
@@ -543,3 +545,4 @@ pyc剑龙隐写
 流量题出的好，其他隐写算是复习了一波，取证马马虎虎吧，这gimp确实没调出来
 
 没有nt套题真好 : )
+{% endraw %}
