@@ -7,6 +7,8 @@ tags:
   - SSTI
   - Python
 ---
+{% raw %}
+
 
 # 一、python_SSTI模板注入介绍
 ### ssti漏洞成因
@@ -690,3 +692,4 @@ for c in ''.__class__.__base__.__subclasses__()
 {{url_for.__globals__.os.popen("cat /flag").read()}}
 
 ```
+{% endraw %}
