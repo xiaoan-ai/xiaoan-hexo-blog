@@ -1061,8 +1061,18 @@ inject:
   head:
     - |
       <style>
-        /* 代码块内选中文字高亮 */
+        /* 全局文字选中高亮 */
+        ::selection {
+          background: rgba(64, 158, 255, 0.35) !important;
+          color: #1a1a2e !important;
+        }
+        ::-moz-selection {
+          background: rgba(64, 158, 255, 0.35) !important;
+          color: #1a1a2e !important;
+        }
+        /* 代码块内选中文字高亮（深色背景用浅色字） */
         #article-container pre,
+        #article-container pre ::selection,
         #article-container code {
           ::selection {
             background: rgba(64, 158, 255, 0.4) !important;
